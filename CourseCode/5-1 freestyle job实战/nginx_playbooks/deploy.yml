@@ -1,0 +1,6 @@
+- hosts: "nginx"
+  gather_facts: true
+  remote_user: root
+  roles:
+    - nginx
+

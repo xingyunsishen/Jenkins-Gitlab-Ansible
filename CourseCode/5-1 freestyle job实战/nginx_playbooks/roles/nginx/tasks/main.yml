@@ -1,0 +1,27 @@
+- name: Disable system firewall
+  service: name=firewalld state=stopped
+
+- name: Disable SELINUX
+  selinux: state=disabled
+
+- name: setup nginx yum source
+  yum: pkg=epel-release state=latest
+
+- name: write then nginx config file
+  template: src=roles/nginx/templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf
+
+- name: create nginx root folder
+  file: 'path={{ root }} state=directory owner={{ user }} group={{ user }} mode=0755'
+
+- name: copy index.html to remote
+  copy: 'remote_src=no src=roles/nginx/files/index.html dest=/www/index.html mode=0755'
+
+- name: restart nginx service
+  service: name=nginx state=restarted
+
+- name: run the health check locally
+  shell: "sh roles/nginx/files/health_check.sh {{ server_name }}"
+  delegate_to: localhost
+  register: health_status
+
+- debug: msg="{{ health_status.stdout }}"

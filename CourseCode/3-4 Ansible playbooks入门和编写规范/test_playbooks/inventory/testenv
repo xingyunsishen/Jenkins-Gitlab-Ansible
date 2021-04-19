@@ -1,0 +1,7 @@
+[testservers]
+test.example.com
+
+[testservers:vars]
+server_name=test.example.com
+user=root
+
